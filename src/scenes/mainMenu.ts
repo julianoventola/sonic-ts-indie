@@ -1,5 +1,6 @@
 import { GameObj, OpacityComp, PosComp, ScaleComp, SpriteComp, AreaComp } from "kaplay";
 import k from "../kaplayCtx";
+import { makeSonic } from "../entities/sonic";
 
 type Piece = GameObj<SpriteComp | PosComp | ScaleComp | OpacityComp | AreaComp>
 
@@ -42,6 +43,20 @@ export default function mainMenu(): void {
       k.scale(platformScale),
     ])
   ]
+
+  k.add([
+    k.text("Sonic ring run", { font: "mania", size: 96 }),
+    k.pos(k.center().x, 200),
+    k.anchor("center")
+  ])
+
+  k.add([
+    k.text("Press Space/Click/Touch to play", { font: "mania", size: 48 }),
+    k.pos(k.center().x, k.center().y - 200),
+    k.anchor("center")
+  ])
+
+  makeSonic(k.vec2(200, 745))
 
   k.onUpdate(() => {
     if (bgPieces[1].pos.x < 0) {
