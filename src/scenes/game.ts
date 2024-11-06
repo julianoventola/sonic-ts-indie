@@ -1,6 +1,7 @@
 import { GameObj, OpacityComp, PosComp, ScaleComp, SpriteComp, AreaComp } from "kaplay";
 import k from "../kaplayCtx";
 import { makeSonic } from "../entities/sonic";
+import { makeMotoBug } from "../entities/motobug";
 
 type Piece = GameObj<SpriteComp | PosComp | ScaleComp | OpacityComp | AreaComp>
 
@@ -45,8 +46,32 @@ export default function game() {
 
   let gameSpeed = 300;
   k.loop(1, () => {
-    gameSpeed += 50;
+    gameSpeed += 200;
   })
+
+  const spawnMotobug = () => {
+    const motobug = makeMotoBug(k.vec2(1950, 773))
+
+    motobug.onUpdate(() => {
+      if (gameSpeed > 2000) {
+        motobug.move(-(gameSpeed + 500), 0)
+        return
+      }
+      motobug.move(-gameSpeed, 0)
+    })
+
+    motobug.onExitScreen(() => {
+      if (motobug.pos.x < 0) {
+        k.destroy(motobug)
+      }
+    })
+
+    const waitTime = k.rand(0.5, 2.5)
+    k.wait(waitTime, spawnMotobug)
+  }
+
+  spawnMotobug()
+
 
   k.add([
     k.rect(bgPieceWidth, 300),
