@@ -1,5 +1,6 @@
 import k from "./kaplayCtx";
 import game from "./scenes/game";
+import gameOver from "./scenes/gameOver";
 import mainMenu from "./scenes/mainMenu";
 
 
@@ -41,8 +42,6 @@ k.scene("main-menu", mainMenu)
 
 k.scene("game", game)
 
-k.scene("game-over", () => {
-
-})
+k.scene("game-over", gameOver)
 
 k.go("main-menu")

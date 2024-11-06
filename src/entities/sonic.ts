@@ -10,6 +10,7 @@ export function makeSonic(pos: Vec2) {
     k.pos(pos),
     k.body({ jumpForce: 1700 }),
     {
+      ringCollectUI: k.add([k.text("", { font: "mania", size: 24 }),]),
       setControls() {
         k.onButtonPress("jump", () => {
           if (sonic.isGrounded()) {
@@ -26,6 +27,12 @@ export function makeSonic(pos: Vec2) {
       }
     }
   ])
+
+  sonic.ringCollectUI = k.add([
+    k.text("", { font: "mania", size: 24 }),
+    k.color(255, 255, 0),
+    k.anchor("center"),
+    k.pos(30, -10)])
 
   return sonic
 }
