@@ -6,7 +6,7 @@ export default function gameOver(citySfx: AudioPlay) {
   let bestScore = k.getData("best-score") as number
   const currentScore = k.getData("current-score") as number
   const rankGrades = ["F", "E", "D", "C", "B", "A", "S"]
-  const rankValues = [50, 80, 100, 200, 300, 400, 500]
+  const rankValues = [50, 100, 150, 250, 350, 500, 1000]
 
   let currentRank = "F"
   let bestRank = "F"
@@ -75,7 +75,7 @@ export default function gameOver(citySfx: AudioPlay) {
 
   k.wait(1, () => {
     k.add([
-      k.text("Press Space/Click to play again", { font: "mania", size: 64 }),
+      k.text("Press Space/Click/Touch to play again", { font: "mania", size: 64 }),
       k.anchor("center"),
       k.pos(k.center().x, k.center().y + 350)
     ])

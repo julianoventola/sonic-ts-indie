@@ -61,17 +61,18 @@ export default function game() {
       sonic.play("jump")
       sonic.jump()
       scoreMultiplier += 1
-      score += 10 * scoreMultiplier
       scoreText.text = `SCORE: ${score}`
-      if (scoreMultiplier === 1) {
+      if (scoreMultiplier == 1) {
         sonic.ringCollectUI.text = "+10"
+        score += 10
       }
-      if (scoreMultiplier > 1) {
-        sonic.ringCollectUI.text = `x${scoreMultiplier * 10} `
-      }
-      k.wait(1, () => {
+      sonic.ringMultiplierCollectUI.text = `x${scoreMultiplier}`
+
+      k.wait(2, () => {
         sonic.ringCollectUI.text = ""
+        sonic.ringMultiplierCollectUI.text = ""
       })
+
       return
     }
     k.play("hurt", { volume: 0.3 })
@@ -82,15 +83,17 @@ export default function game() {
   sonic.onCollide("ring", (ring) => {
     k.play("ring", { volume: 0.3 })
     k.destroy(ring)
-    score += 1
+    score += 1 * scoreMultiplier
     scoreText.text = `SCORE: ${score}`
     sonic.ringCollectUI.text = "+1"
     k.wait(1, () => sonic.ringCollectUI.text = "")
   })
 
-  let gameSpeed = 300;
+  let gameSpeed = 500;
   k.loop(1, () => {
-    gameSpeed += 200;
+    if (gameSpeed < 2000) {
+      gameSpeed += 50;
+    }
   })
 
   const spawnRing = () => {
@@ -114,7 +117,7 @@ export default function game() {
     const motobug = makeMotoBug(k.vec2(1950, 773))
 
     motobug.onUpdate(() => {
-      if (gameSpeed > 2000) {
+      if (gameSpeed > 1500) {
         motobug.move(-(gameSpeed + 500), 0)
         return
       }
@@ -126,13 +129,16 @@ export default function game() {
         k.destroy(motobug)
       }
     })
+    let waitTime = k.rand(0.5, 4)
 
-    const waitTime = k.rand(0.5, 4)
+    if (gameSpeed > 1500) {
+      waitTime = k.rand(0.5, 1.5)
+    }
+
     k.wait(waitTime, spawnMotobug)
   }
 
   spawnMotobug()
-
 
   k.add([
     k.rect(bgPieceWidth, 300),
@@ -143,10 +149,6 @@ export default function game() {
   ])
 
   k.onUpdate(() => {
-    if (sonic.isGrounded()) {
-      scoreMultiplier = 0
-    }
-
     bgPieces[0].moveTo(bgPieces[0].pos.x, -sonic.pos.y / 10 - 50)
     bgPieces[1].moveTo(bgPieces[1].pos.x, -sonic.pos.y / 10 - 50)
 

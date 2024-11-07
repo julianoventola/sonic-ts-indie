@@ -10,7 +10,8 @@ export function makeSonic(pos: Vec2) {
     k.pos(pos),
     k.body({ jumpForce: 1700 }),
     {
-      ringCollectUI: k.add([k.text("", { font: "mania", size: 24 }),]),
+      ringCollectUI: k.add([k.text("", { font: "mania", size: 96 }),]),
+      ringMultiplierCollectUI: k.add([k.text("", { font: "mania", size: 96 }),]),
       setControls() {
         k.onButtonPress("jump", () => {
           if (sonic.isGrounded()) {
@@ -29,10 +30,17 @@ export function makeSonic(pos: Vec2) {
   ])
 
   sonic.ringCollectUI = k.add([
-    k.text("", { font: "mania", size: 24 }),
+    k.text("", { font: "mania", size: 96 }),
     k.color(255, 255, 0),
     k.anchor("center"),
-    k.pos(30, -10)])
+    k.pos(200, 600)])
+
+  sonic.ringMultiplierCollectUI = k.add([
+    k.text("", { font: "mania", size: 96 }),
+    k.color(255, 255, 0),
+    k.anchor("center"),
+    k.pos(350, 700)])
+
 
   return sonic
 }
