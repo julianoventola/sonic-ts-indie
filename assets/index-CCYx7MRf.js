@@ -5530,7 +5530,8 @@ function makeSonic(pos) {
     k.pos(pos),
     k.body({ jumpForce: 1700 }),
     {
-      ringCollectUI: k.add([k.text("", { font: "mania", size: 24 })]),
+      ringCollectUI: k.add([k.text("", { font: "mania", size: 96 })]),
+      ringMultiplierCollectUI: k.add([k.text("", { font: "mania", size: 96 })]),
       setControls() {
         k.onButtonPress("jump", () => {
           if (sonic.isGrounded()) {
@@ -5548,10 +5549,16 @@ function makeSonic(pos) {
     }
   ]);
   sonic.ringCollectUI = k.add([
-    k.text("", { font: "mania", size: 24 }),
+    k.text("", { font: "mania", size: 96 }),
     k.color(255, 255, 0),
     k.anchor("center"),
-    k.pos(30, -10)
+    k.pos(200, 600)
+  ]);
+  sonic.ringMultiplierCollectUI = k.add([
+    k.text("", { font: "mania", size: 96 }),
+    k.color(255, 255, 0),
+    k.anchor("center"),
+    k.pos(350, 700)
   ]);
   return sonic;
 }
@@ -5627,16 +5634,15 @@ function game() {
       sonic.play("jump");
       sonic.jump();
       scoreMultiplier += 1;
-      score += 10 * scoreMultiplier;
       scoreText.text = `SCORE: ${score}`;
-      if (scoreMultiplier === 1) {
+      if (scoreMultiplier == 1) {
         sonic.ringCollectUI.text = "+10";
+        score += 10;
       }
-      if (scoreMultiplier > 1) {
-        sonic.ringCollectUI.text = `x${scoreMultiplier * 10} `;
-      }
-      k.wait(1, () => {
+      sonic.ringMultiplierCollectUI.text = `x${scoreMultiplier}`;
+      k.wait(2, () => {
         sonic.ringCollectUI.text = "";
+        sonic.ringMultiplierCollectUI.text = "";
       });
       return;
     }
@@ -5647,14 +5653,16 @@ function game() {
   sonic.onCollide("ring", (ring) => {
     k.play("ring", { volume: 0.3 });
     k.destroy(ring);
-    score += 1;
+    score += 1 * scoreMultiplier;
     scoreText.text = `SCORE: ${score}`;
     sonic.ringCollectUI.text = "+1";
     k.wait(1, () => sonic.ringCollectUI.text = "");
   });
-  let gameSpeed = 300;
+  let gameSpeed = 500;
   k.loop(1, () => {
-    gameSpeed += 200;
+    if (gameSpeed < 2e3) {
+      gameSpeed += 50;
+    }
   });
   const spawnRing = () => {
     const ring = makeRing(k.vec2(1950, 745));
@@ -5673,7 +5681,7 @@ function game() {
   const spawnMotobug = () => {
     const motobug = makeMotoBug(k.vec2(1950, 773));
     motobug.onUpdate(() => {
-      if (gameSpeed > 2e3) {
+      if (gameSpeed > 1500) {
         motobug.move(-(gameSpeed + 500), 0);
         return;
       }
@@ -5684,7 +5692,10 @@ function game() {
         k.destroy(motobug);
       }
     });
-    const waitTime = k.rand(0.5, 4);
+    let waitTime = k.rand(0.5, 4);
+    if (gameSpeed > 1500) {
+      waitTime = k.rand(0.5, 1.5);
+    }
     k.wait(waitTime, spawnMotobug);
   };
   spawnMotobug();
@@ -5696,9 +5707,6 @@ function game() {
     k.body({ isStatic: true })
   ]);
   k.onUpdate(() => {
-    if (sonic.isGrounded()) {
-      scoreMultiplier = 0;
-    }
     bgPieces[0].moveTo(bgPieces[0].pos.x, -sonic.pos.y / 10 - 50);
     bgPieces[1].moveTo(bgPieces[1].pos.x, -sonic.pos.y / 10 - 50);
     if (bgPieces[1].pos.x < 0) {
@@ -5722,7 +5730,7 @@ function gameOver(citySfx) {
   let bestScore = k.getData("best-score");
   const currentScore = k.getData("current-score");
   const rankGrades = ["F", "E", "D", "C", "B", "A", "S"];
-  const rankValues = [50, 80, 100, 200, 300, 400, 500];
+  const rankValues = [50, 100, 150, 250, 350, 500, 1e3];
   let currentRank = "F";
   let bestRank = "F";
   for (let index = 0; index < rankValues.length; index++) {
@@ -5779,7 +5787,7 @@ function gameOver(citySfx) {
   ]);
   k.wait(1, () => {
     k.add([
-      k.text("Press Space/Click to play again", { font: "mania", size: 64 }),
+      k.text("Press Space/Click/Touch to play again", { font: "mania", size: 64 }),
       k.anchor("center"),
       k.pos(k.center().x, k.center().y + 350)
     ]);
